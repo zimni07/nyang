@@ -29,7 +29,6 @@ def get_score(event_data, input_value):
 st.title("경찰공무원 체력 측정 점수 계산기👮‍♀️👮")
 
 # 참고 이미지 추가
-st.image("https://postfiles.pstatic.net/MjAyMTA1MTlfOTcg/MDAxNjIxNDMzMzQ2MjQ1.LyLiPF_bShty6ZkcLqt5HRD3F6dcEDLTwL0e62fFdHQg.vnuSbKIW7LafvgAIOEfMregWGVyRuOrPDer-NxTAm7Qg.PNG.alwayspring_/%EC%9D%B4%EB%AF%B8%EC%A7%80_17.png?type=w773")
 
 # 성별 선택
 gender = st.selectbox("성별을 선택하세요", list(data.keys()))
