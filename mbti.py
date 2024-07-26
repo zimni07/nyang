@@ -1,40 +1,43 @@
 import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
 
-# 제목 설정
-st.title('나의 MBTI 특징 알아보기!!')
+# CSV 파일 읽기
+file_path = '/mnt/data/daily_temp.csv'
+data = pd.read_csv(file_path)
 
-# 이름 입력
-name = st.text_input('이름을 입력해주세요 : ')
+# 날짜를 datetime 형식으로 변환
+data['date'] = pd.to_datetime(data['date'])
 
-# MBTI 선택
-mbti = st.selectbox('당신의 MBTI를 선택해주세요:', 
-                    ['ISTJ', 'ISFJ', 'INFJ', 'INTJ', 'ISTP', 'ISFP', 'INFP', 'INTP', 
-                     'ESTP', 'ESFP', 'ENFP', 'ENTP', 'ESTJ', 'ESFJ', 'ENFJ', 'ENTJ'])
+# 연도 추출
+data['year'] = data['date'].dt.year
 
-# 인사말 생성 버튼
-if st.button('특징 설명 및 추천'):
-    if name and mbti:
-        # MBTI 설명 및 추천
-        mbti_descriptions = {
-            'ISTJ': "ISTJ는 책임감이 강하고 신뢰할 수 있으며, 체계적이고 현실적입니다. "
-                    "이들은 논리적이며, 규칙과 절차를 중시합니다. "
-                    "분석적 사고를 통해 문제를 해결하고, 신중하게 의사 결정을 내립니다. "
-                    "어울리는 MBTI: ESFP",
+# 연도별 기온 통계 계산
+yearly_stats = data.groupby('year')['temperature'].agg(['mean', 'min', 'max']).reset_index()
 
-            'ISFJ': "ISFJ는 따뜻하고 친절하며, 헌신적입니다. "
-                    "이들은 세심하고, 다른 사람들을 돌보는 것을 좋아합니다. "
-                    "전통과 안정성을 중시하며, 자세하고 꼼꼼합니다. "
-                    "어울리는 MBTI: ESTP",
+# 스트림릿 제목
+st.title("연도별 평균, 최저, 최고 기온 변화 추이")
 
-            # ... 다른 MBTI 설명 추가
+# 그래프 선택 옵션
+chart_type = st.selectbox("그래프 유형 선택", ["꺾은선 그래프", "막대 그래프"])
 
-            'ENTJ': "ENTJ는 리더십이 강하고, 목표 지향적이며, 결단력 있습니다. "
-                    "이들은 전략적 사고와 계획 수립에 능합니다. "
-                    "효율성과 성과를 중시하며, 도전을 즐깁니다. "
-                    "어울리는 MBTI: INTP"
-        }
+# 그래프 그리기
+fig, ax = plt.subplots()
 
-        description = mbti_descriptions.get(mbti, "선택한 MBTI에 대한 설명이 없습니다.")
-        st.write(f'{name}님! 당신의 MBTI는 {mbti}입니다. {description}')
-    else:
-        st.write("이름과 MBTI를 입력해주세요.")
+if chart_type == "꺾은선 그래프":
+    ax.plot(yearly_stats['year'], yearly_stats['mean'], label='평균 기온', marker='o')
+    ax.plot(yearly_stats['year'], yearly_stats['min'], label='최저 기온', marker='o')
+    ax.plot(yearly_stats['year'], yearly_stats['max'], label='최고 기온', marker='o')
+    ax.set_title('연도별 평균, 최저, 최고 기온 (꺾은선 그래프)')
+elif chart_type == "막대 그래프":
+    ax.bar(yearly_stats['year'] - 0.2, yearly_stats['mean'], width=0.2, label='평균 기온')
+    ax.bar(yearly_stats['year'], yearly_stats['min'], width=0.2, label='최저 기온')
+    ax.bar(yearly_stats['year'] + 0.2, yearly_stats['max'], width=0.2, label='최고 기온')
+    ax.set_title('연도별 평균, 최저, 최고 기온 (막대 그래프)')
+
+ax.set_xlabel('연도')
+ax.set_ylabel('기온 (°C)')
+ax.legend()
+
+# 스트림릿에 그래프 표시
+st.pyplot(fig)
