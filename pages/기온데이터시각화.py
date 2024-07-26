@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # CSV 파일 읽기
-file_path = '/mnt/data/daily_temp.csv'
+file_path = 'daily_temp.csv'
 data = pd.read_csv(file_path)
 
 # 열 이름에서 공백과 탭 제거
