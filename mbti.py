@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # CSV 파일 읽기
-file_path = '/mnt/data/daily_temp.csv'
+file_path = 'daily_temp.csv'
 data = pd.read_csv(file_path)
 
 # 날짜를 datetime 형식으로 변환
