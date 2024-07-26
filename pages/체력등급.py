@@ -18,6 +18,13 @@ data = {
     }
 }
 
+# 구간 데이터 변환
+def get_score(event_data, input_value):
+    for threshold, score in event_data:
+        if input_value <= threshold:
+            return score
+    return 0
+
 # 스트림릿 애플리케이션
 st.title("경찰 체력 측정 점수 계산기👮👮‍♀️")
 
@@ -33,10 +40,7 @@ for event in data[gender]:
 # 점수 계산
 total_score = 0
 for event, score in scores.items():
-    for threshold, points in data[gender][event]:
-        if score <= threshold:
-            total_score += points
-            break
+    total_score += get_score(data[gender][event], score)
 
 # 결과 출력
 st.write(f"총점: {total_score}")
