@@ -3,14 +3,21 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # CSV 파일 읽기
-file_path = 'daily_temp.csv'
+file_path = '/mnt/data/daily_temp.csv'
 data = pd.read_csv(file_path)
 
 # 열 이름에서 공백과 탭 제거
 data.columns = data.columns.str.strip()
 
+# 날짜 열에서 탭과 공백 제거
+data['날짜'] = data['날짜'].str.strip()
+
 # 날짜를 datetime 형식으로 변환
-data['날짜'] = pd.to_datetime(data['날짜'].str.strip(), format='\t%Y-%m-%d')
+try:
+    data['날짜'] = pd.to_datetime(data['날짜'], format='%Y-%m-%d')
+except ValueError as e:
+    st.error(f"날짜 변환 중 오류가 발생했습니다: {e}")
+    st.stop()
 
 # 연도 추출
 data['연도'] = data['날짜'].dt.year
